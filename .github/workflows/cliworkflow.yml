@@ -7,8 +7,7 @@ on:
 
 env:
   JF_URL: https://tompazus.jfrog.io/artifactory
-  JF_USER: ${{ secrets.JF_USER }}
-  JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
+  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
   JF_BUILD_NAME: ejs-frog-demo-build
   JF_BUILD_NUMBER: ${{ github.run_number }}
   JF_REPO_LOCAL: npm-local
