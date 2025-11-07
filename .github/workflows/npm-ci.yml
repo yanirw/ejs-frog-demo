@@ -1,0 +1,114 @@
+name: DevSecOps NPM Pipeline
+
+on:
+  pull_request:
+    types: [opened, closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
+env:
+  JF_URL: ${{ secrets.JF_URL }}
+  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+  PACKAGE_NAME: ejs-frog-demo
+  BUILD_NAME: ejs-frog-demo-build
+
+jobs:
+  dependency-scan:
+    if: github.event.action == 'opened' || github.event.pull_request.merged == true
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Frogbot Security Scan
+      uses: jfrog/frogbot@v2.26.3
+      env:
+        JF_URL: ${{ env.JF_URL }}
+        JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
+        JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        JF_WATCHES: "npm-security-watch"
+        # JF_FAIL: "true"
+        # JF_MIN_SEVERITY: "high"
+
+  build:
+    if: github.event.pull_request.merged == true
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: dependency-scan
+    outputs:
+      build-number: ${{ steps.build-number.outputs.number }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generate build number
+      id: build-number
+      run: |
+        BUILD_NUM=${GITHUB_SHA::8}
+        echo "number=$BUILD_NUM" >> $GITHUB_OUTPUT
+        echo "Generated build number: $BUILD_NUM"
+
+    - name: Setup Node npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+  npm-build-and-scan:
+    if: github.event.pull_request.merged == true
+    name: NPM Build, Publish & Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup JFrog CLI
+      uses: jfrog/setup-jfrog-cli@v4
+      env:
+        JF_URL: ${{ env.JF_URL }}
+        JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
+
+    - name: Setup Node npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Set CLI npm Config
+      run: |
+        jf npm-config --global=true \
+          --repo-resolve=npm-curated-remote \
+          --repo-deploy=npm-local
+
+    - name: Install Dependencies
+      run: jf npm install
+
+    - name: Local X-ray NPM scan
+      run: |
+        echo "🛡️ Scanning NPM dependencies locally before publish"
+        jf audit --watches="npm-security-watch"
+
+    - name: Publish Package to Artifactory
+      run: jf npm publish
+
+    - name: Publish build info to JFrog
+      env:
+        JFROG_CLI_BUILD_NAME: ${{ env.BUILD_NAME }}
+        JFROG_CLI_BUILD_NUMBER: ${{ needs.build.outputs.build-number }}
+      run: |
+        echo "Publishing build info to JFrog..."
+        jf rt build-collect-env
+        jf rt build-add-git
+        jf rt build-publish
+
+    - name: XRay security scan
+      env:
+        JFROG_CLI_BUILD_NAME: ${{ env.BUILD_NAME }}
+        JFROG_CLI_BUILD_NUMBER: ${{ needs.build.outputs.build-number }}
+      run: |
+        echo "🛡️ Scanning build against XRay policies"
+        jf build-scan $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER --watches="npm-security-watch"
