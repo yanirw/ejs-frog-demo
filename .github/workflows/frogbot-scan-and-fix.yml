@@ -1,0 +1,45 @@
+# This workflow uses Frogbot to automatically create pull requests with fixes for vulnerable dependencies.
+# Uses JFrog Xray to scan the project and creates PRs with dependency updates.
+# Read more about Frogbot here - https://docs.jfrog-applications.jfrog.io/jfrog-applications/frogbot
+
+name: "Frogbot Scan and Fix"
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    # Run daily at 2 AM UTC to check for new vulnerabilities
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
+jobs:
+  create-fix-pull-requests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Frogbot Scan and Fix
+        uses: jfrog/frogbot@v2.26.3
+        env:
+          # JFrog platform URL
+          JF_URL: ${{ secrets.JF_URL }}
+          
+          # JFrog access token
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+          
+          # GitHub token for creating PRs
+          JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Install command for npm dependencies
+          JF_INSTALL_DEPS_CMD: "npm install"
+          
+          # Use your existing repository for dependency resolution
+          JF_DEPS_REPO: "demo-dev-npm-remote"
+          
+          # Watch to use for vulnerability detection
+          JF_WATCHES: "npm-security-watch"

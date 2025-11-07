@@ -2,8 +2,6 @@
 
 [![Frogbot Scan Repository](https://github.com/muldos/ejs-frog-demo/actions/workflows/frogbot-scan-repository.yaml/badge.svg)](https://github.com/muldos/ejs-frog-demo/actions/workflows/frogbot-scan-repository.yaml)
 
-<!-- Updated for Frogbot testing -->
-
 ## Overview
 This a demo Express JS application to illustrate how a critical vulnerability can be exploited and how it could have been detected and remediated using [Jfrog Advanced Security](https://jfrog.com/advanced-security/) new features.
 
