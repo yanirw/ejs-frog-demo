@@ -32,8 +32,8 @@ jobs:
         JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
         JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JF_WATCHES: "npm-security-watch"
+        JF_INCLUDE_ALL_VULNERABILITIES: "true"
         # JF_FAIL: "true"
-        # JF_MIN_SEVERITY: "high"
 
   build:
     if: github.event.pull_request.merged == true
@@ -81,8 +81,8 @@ jobs:
     - name: Set CLI npm Config
       run: |
         jf npm-config --global=true \
-          --repo-resolve=npm-curated-remote \
-          --repo-deploy=npm-local
+          --repo-resolve=demo-dev-npm-remote \
+          --repo-deploy=demo-dev-npm-local
 
     - name: Install Dependencies
       run: jf npm install
