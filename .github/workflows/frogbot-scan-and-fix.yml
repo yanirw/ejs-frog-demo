@@ -21,7 +21,7 @@ jobs:
         # The repository scanning will be triggered on the main branch.
         branch: ["main"]
     steps:
-      - uses: jfrog/frogbot@v2
+      - uses: jfrog/frogbot@v2.29.1
         env:
           # [Mandatory]
           JF_URL: ${{ secrets.JF_URL }}
@@ -32,6 +32,8 @@ jobs:
           # [Mandatory if JF_ACCESS_TOKEN is not provided]
           JF_USER: ${{ secrets.JF_USER }}
           JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
+          JF_WATCHES: "npm-security-watch"
+
 
           # [Mandatory]
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
