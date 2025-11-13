@@ -33,6 +33,7 @@ jobs:
         JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JF_WATCHES: "npm-security-watch"
         JF_INCLUDE_ALL_VULNERABILITIES: "true"
+        JFROG_CLI_LOG_LEVEL: DEBUG
         # JF_FAIL: "true"
 
   build:
