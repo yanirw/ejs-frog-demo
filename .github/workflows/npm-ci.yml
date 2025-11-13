@@ -26,13 +26,14 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Frogbot Security Scan
-      uses: jfrog/frogbot@v2.26.3
+      uses: jfrog/frogbot@v2.29.1
       env:
         JF_URL: ${{ env.JF_URL }}
         JF_ACCESS_TOKEN: ${{ env.JF_ACCESS_TOKEN }}
         JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JF_WATCHES: "npm-security-watch"
         JF_INCLUDE_ALL_VULNERABILITIES: "true"
+        JFROG_CLI_LOG_LEVEL: DEBUG
         # JF_FAIL: "true"
 
   build:
