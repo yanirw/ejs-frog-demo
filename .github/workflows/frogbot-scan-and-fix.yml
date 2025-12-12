@@ -24,6 +24,7 @@ jobs:
       - uses: jfrog/frogbot@v2.29.1
         env:
           # [Mandatory]
+          JF_URL: ${{ secrets.JF_URL }}
           JF_DEBUG: "true"
           JF_MIN_SEVERITY: "Low"
           JF_INCLUDE_ALL_VULNERABILITIES: "true"
