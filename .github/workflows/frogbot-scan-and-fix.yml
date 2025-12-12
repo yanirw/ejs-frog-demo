@@ -27,6 +27,7 @@ jobs:
           JF_DEBUG: "true"
           JF_MIN_SEVERITY: "Low"
           JF_INCLUDE_ALL_VULNERABILITIES: "true"
+          JF_DEPS_REPO: "demo-dev-npm"
 
           # [Mandatory] if JF_USER and JF_PASSWORD are not provided]
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
@@ -42,7 +43,3 @@ jobs:
 
           # [Mandatory]
           JF_GIT_BASE_BRANCH: ${{ matrix.branch }}
-
-        # [Mandatory if using OIDC authentication protocol instead of JF_ACCESS_TOKEN]
-        # with:
-        #   oidc-provider-name: ""
