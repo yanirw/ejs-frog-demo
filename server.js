@@ -1,8 +1,9 @@
 var express = require('express');
 const bodyParser = require('body-parser');
-const lodash = require('lodash'); 
+const lodash = require('lodash');
+const axioss = require('axioss');
 Object.freeze(Object.prototype);
-const evilsrc = {constructor: {prototype: {evilkey: "evilvalue"}}};
+const evilsrc = { constructor: { prototype: { evilkey: "evilvalue" } } };
 lodash.defaultsDeep({}, evilsrc);
 
 var app = express();
@@ -15,23 +16,31 @@ app.set('view engine', 'ejs');
 // static assets directory
 app.use(express.static('public'));
 app
-    .use(bodyParser.urlencoded({extended: true}))
-    .use(bodyParser.json());
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(bodyParser.json());
 // index page, this callback contains code that can be exploited for CVE-2022-29078 
-app.get('/', function(req, res) {
-  if (!req.query.hasOwnProperty('id')){
+app.get('/', function (req, res) {
+  if (!req.query.hasOwnProperty('id')) {
     req.query.id = 'Stranger';
   }
   //Object.freeze(Object.prototype);
-  res.render('pages/index',req.query);
+  res.render('pages/index', req.query);
 });
-// This api call, can be used to change ejs opts.outputFunctionName, hence creating a webshell 
+// This api call, can be used to change ejs opts.outputFunctionName, hence creating a webshell
 app.post("/fear", (req, res) => {
   let data = {};
   let input = req.body.content;
   //Object.freeze(Object.prototype);
   lodash.defaultsDeep(data, input);
-  res.json({message: `default response message for an expected payload! - content is ${input}`});
+  res.json({ message: `default response message for an expected payload! - content is ${input}` });
 });
+
+// Malicious package usage for testing DO NOT RUN 
+app.get("/fetch", (req, res) => {
+  axioss.get('http://www.example.com');
+  res.send('fetched');
+});
+
 app.listen(3000);
 console.log('Server is listening on port 3000');
+
