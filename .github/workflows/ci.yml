@@ -78,8 +78,8 @@ jobs:
         FULL_IMAGE="${{ vars.DOCKER_REPO }}/${{ env.IMAGE_NAME }}"
         
         echo "Building image: $FULL_IMAGE:$IMAGE_TAG"
-        # We pass JF_TOKEN if needed, though we removed it from Dockerfile mostly. Kept for safety if args remain.
-        jf docker build -t $FULL_IMAGE:$IMAGE_TAG .
+        # We pass INJECTED_SECRET from GitHub Secrets to test secret detection in binary
+        jf docker build -t $FULL_IMAGE:$IMAGE_TAG --build-arg INJECTED_SECRET=${{ secrets.FAKE_SECRET }} .
         
     - name: Local Xray Docker Scan
       run: |
