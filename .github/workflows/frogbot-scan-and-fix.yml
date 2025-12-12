@@ -31,10 +31,6 @@ jobs:
           # [Mandatory] if JF_USER and JF_PASSWORD are not provided]
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
 
-          # [Mandatory if JF_ACCESS_TOKEN is not provided]
-          JF_USER: ${{ secrets.JF_USER }}
-          JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
-          
           JF_GIT_AGGREGATE_FIXES: "true"
 
           # [Optional]
