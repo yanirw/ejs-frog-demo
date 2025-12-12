@@ -61,7 +61,7 @@ jobs:
         jf rt bag ${{ env.BUILD_NAME }} ${{ github.run_number }} 
         
         # 2. Configure Artifactory Resolution
-        jf npmc --repo-resolve demo-dev-npm-local
+        jf npmc --repo-resolve demo-dev-npm
         
         # 3. Curation Audit
         jf ca
