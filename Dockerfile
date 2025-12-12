@@ -1,7 +1,5 @@
 FROM node:18-bullseye
 
-ARG JF_TOKEN
-
 # Create app directory
 WORKDIR /usr/src/app
 COPY package*.json ./

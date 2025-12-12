@@ -79,7 +79,7 @@ jobs:
         
         echo "Building image: $FULL_IMAGE:$IMAGE_TAG"
         # We pass JF_TOKEN if needed, though we removed it from Dockerfile mostly. Kept for safety if args remain.
-        jf docker build -t $FULL_IMAGE:$IMAGE_TAG --build-arg JF_TOKEN=${{ env.JF_ACCESS_TOKEN }} .
+        jf docker build -t $FULL_IMAGE:$IMAGE_TAG .
         
     - name: Local Xray Docker Scan
       run: |
