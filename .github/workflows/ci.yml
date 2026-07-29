@@ -86,3 +86,8 @@ jobs:
         echo "Publishing build info..."
         # Note: 'jf rt bp' publishes the collected info from all previous steps (bce, bag, npm i, docker push)
         jf rt bp ${{ env.BUILD_NAME }} ${{ github.run_number }}
+
+    - name: JFrog Build Scan
+      run: |
+        echo "🛡️ Scanning published build with Xray..."
+        jf build-scan ${{ env.BUILD_NAME }} ${{ github.run_number }} --fail=false
